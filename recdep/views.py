@@ -14,6 +14,9 @@ from .models import (Device, DeviceCheckin, DeviceBatteryCheckin,
 LOCATION_SERIALIZE = {
     "include": [
         ("point", lambda x: x.point.coords),
+    ],
+    "exclude": [
+        "id"
     ]
 }
 
