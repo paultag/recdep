@@ -1,6 +1,8 @@
 import json
 
-from .helpers import RecDepListEndpoint, RecDepDetailEndpoint, smerge
+from .helpers import (RecDepListEndpoint, RecDepDetailEndpoint,
+                      smerge, validate_machine_update)
+
 from .models import (Device, DeviceCheckin, DeviceBatteryCheckin,
                      DeviceWifiCheckin, AccessPoint)
 
@@ -80,7 +82,7 @@ class DeviceDetail(RecDepDetailEndpoint):
             )
             dwc.save()
 
-    @Device.validate_update
+    @validate_machine_update
     def post(self, request, key, **kwargs):
         data = json.loads(request.data['upload'])
         device = Device.objects.get(name=key)

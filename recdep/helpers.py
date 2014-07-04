@@ -3,6 +3,11 @@ from django.core.paginator import Paginator, EmptyPage
 from restless.modelviews import ListEndpoint, DetailEndpoint
 from restless.models import serialize
 from restless.http import HttpError
+from restless.auth import BasicHttpAuthMixin, login_required
+
+from .models import Device
+
+import json
 
 
 def smerge(dict1, dict2):
@@ -14,7 +19,26 @@ def smerge(dict1, dict2):
     return ret
 
 
-class RecDepListEndpoint(ListEndpoint):
+def validate_machine_update(fn):
+    def _(self, request, *args, **kwargs):
+        machine = kwargs.get('key', None)
+        if machine is None:
+            raise HttpError(401, "No device given")
+
+        try:
+            m = Device.objects.get(name=machine)
+        except Device.DoesNotExist:
+            raise HttpError(401, "Bad device given")
+
+        token = json.loads(request.data['config']).get('token', None)
+        if token != m.token:
+            raise HttpError(401, "Bad device given")
+
+        return fn(self, request, *args, **kwargs)
+    return _
+
+
+class RecDepListEndpoint(ListEndpoint, BasicHttpAuthMixin):
     methods = ['GET']
     per_page = 100
     serialize_config = {}
@@ -29,6 +53,7 @@ class RecDepListEndpoint(ListEndpoint):
         paginator = Paginator(data, per_page=self.per_page)
         return paginator.page(page)
 
+    @login_required
     def get(self, request, *args, **kwargs):
         params = request.params
         page = 1
@@ -57,6 +82,10 @@ class RecDepListEndpoint(ListEndpoint):
                 "per_page": self.per_page,
                 "max_page": data_page.end_index(),
                 "total_count": data.count(),
+                "user": {
+                    "username": request.user.username,
+                    "id": request.user.id
+                }
             },
             "results": [
                 serialize(x, **self.serialize_config)
@@ -65,7 +94,7 @@ class RecDepListEndpoint(ListEndpoint):
         }
 
 
-class RecDepDetailEndpoint(DetailEndpoint):
+class RecDepDetailEndpoint(DetailEndpoint, BasicHttpAuthMixin):
     methods = ['GET', 'POST']
     serialize_config = {}
     query_key = None
@@ -79,6 +108,7 @@ class RecDepDetailEndpoint(DetailEndpoint):
 
         return self.model.objects.get(**{self.query_key: key})
 
+    @login_required
     def get(self, request, *args, **kwargs):
         data = self.get_object(request, *args, **kwargs)
         return serialize(data, **self.serialize_config)
