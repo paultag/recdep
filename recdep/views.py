@@ -9,7 +9,8 @@ from .helpers import (RecDepListEndpoint, RecDepDetailEndpoint,
                       smerge, validate_machine_update)
 
 from .models import (Device, DeviceCheckin, DeviceBatteryCheckin,
-                     DeviceWifiCheckin, AccessPoint)
+                     DeviceWifiCheckin, AccessPoint, Place)
+
 
 LOCATION_SERIALIZE = {
     "include": [
@@ -106,6 +107,28 @@ class DeviceDetail(RecDepDetailEndpoint):
         device = Device.objects.get(name=key)
         for report in data:
             self.load_report(device, report)
+
+
+class PlaceList(RecDepListEndpoint):
+    model = Place
+    serialize_config = smerge(
+        LOCATION_SERIALIZE,
+        {"include": [
+            ("access_points", {
+                "exclude": ["id", "location"],
+            }),
+        ]})
+
+
+class PlaceDetail(RecDepDetailEndpoint):
+    model = Place
+    query_key = "name"
+    serialize_config = LOCATION_SERIALIZE
+
+    @validate_machine_update
+    def post(self, request, key, **kwargs):
+        raise NotImplementedError("Foo")
+
 
 
 class TextEndpoint(Endpoint, BasicHttpAuthMixin):

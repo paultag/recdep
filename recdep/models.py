@@ -9,6 +9,10 @@ class Place(models.Model):
     point = gis_models.PointField()
     objects = gis_models.GeoManager()
 
+    @property
+    def access_points(self):
+        return self.aps.all()
+
 
 class AccessPoint(models.Model):
     ssid = models.CharField(max_length=128)
