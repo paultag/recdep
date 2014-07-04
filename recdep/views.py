@@ -49,7 +49,15 @@ DEVICE_SERIALIZE = {
             "include": [
                 ("location", LOCATION_SERIALIZE),
                 ("wifi_checkins", {
-                    "exclude": ["id", "checkin", "access_point"]
+                    "include": [
+                        ("access_point", {
+                            "fields": [
+                                "bssid",
+                                "ssid",
+                            ]
+                        }),
+                    ],
+                    "exclude": ["id", "checkin"],
                 }),
                 ("batteries", smerge(BATTERY_SERIALIZE, {
                     "exclude": ["id", "checkin"]
