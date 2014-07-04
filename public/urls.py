@@ -4,4 +4,5 @@ import recdep.urls
 
 urlpatterns = patterns('',
     ('^v1/', include('recdep.urls')),
+    ('^admin/', include(admin.site.urls)),
 )

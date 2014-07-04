@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
-from recdep.views import DeviceList
+from recdep.views import DeviceList, DeviceDetail
 
 urlpatterns = patterns('',
     url(r'^devices/$', DeviceList.as_view()),
-    url(r'^device/(?P<fk>.*)/$', DeviceList.as_view()),
+    url(r'^devices/(?P<key>.*)/$', DeviceDetail.as_view()),
 )
