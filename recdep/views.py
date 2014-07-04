@@ -80,6 +80,7 @@ class DeviceDetail(RecDepDetailEndpoint):
             )
             dwc.save()
 
+    @Device.validate_update
     def post(self, request, key, **kwargs):
         data = json.loads(request.data['upload'])
         device = Device.objects.get(name=key)

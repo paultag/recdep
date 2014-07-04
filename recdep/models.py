@@ -12,6 +12,27 @@ class Device(models.Model):
     name = models.CharField(max_length=128)
     token = models.CharField(max_length=128)
 
+    def validate_update(fn):
+        import json
+        from restless.http import HttpError
+
+        def _(self, request, *args, **kwargs):
+            machine = kwargs.get('key', None)
+            if machine is None:
+                raise HttpError(401, "No device given")
+
+            try:
+                m = Device.objects.get(name=machine)
+            except Device.DoesNotExist:
+                raise HttpError(401, "Bad device given")
+
+            token = json.loads(request.data['config']).get('token', None)
+            if token != m.token:
+                raise HttpError(401, "Bad device given")
+
+            return fn(self, request, *args, **kwargs)
+        return _
+
     @property
     def checkin(self):
         try:
