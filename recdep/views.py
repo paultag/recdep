@@ -50,12 +50,7 @@ DEVICE_SERIALIZE = {
                 ("location", LOCATION_SERIALIZE),
                 ("wifi_checkins", {
                     "include": [
-                        ("access_point", {
-                            "fields": [
-                                "bssid",
-                                "ssid",
-                            ]
-                        }),
+                        ("access_point", {"fields": ["bssid", "ssid"]}),
                     ],
                     "exclude": ["id", "checkin"],
                 }),
