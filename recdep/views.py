@@ -11,9 +11,18 @@ from .helpers import (RecDepListEndpoint, RecDepDetailEndpoint,
 from .models import (Device, DeviceCheckin, DeviceBatteryCheckin,
                      DeviceWifiCheckin, AccessPoint)
 
+LOCATION_SERIALIZE = {
+    "include": [
+        ("point", lambda x: x.point.coords),
+    ]
+}
+
 
 ACCESS_POINT_SERIALIZE = {
-    "exclude": ["id"]
+    "exclude": ["id"],
+    "include": [
+        ("location", LOCATION_SERIALIZE),
+    ]
 }
 
 

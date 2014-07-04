@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from django.contrib.gis.geos import fromstr
 
-from ...models import Place
+from ...models import Place, AccessPoint
 import yaml
 
 
@@ -12,9 +12,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for fp in args:
             with open(fp, 'r') as fd:
-                places = yaml.load(fd).get('places', [])
+                datastore = yaml.load(fd)
 
-            for data in places:
+            for data in datastore.get('places', []):
                 name = data['name']
                 try:
                     place = Place.objects.get(name=name)
@@ -28,3 +28,19 @@ class Command(BaseCommand):
                 place.point = point
                 place.description = data['description']
                 place.save()
+
+            for data in datastore.get('known_aps', []):
+                place = Place.objects.get(name=data['location'])
+                ssid = data['ssid']
+                bssid = data['bssid']
+
+                try:
+                    ap = AccessPoint.objects.get(bssid=bssid)
+                    print("Update bssid: {}".format(bssid))
+                except AccessPoint.DoesNotExist:
+                    print("New bssid: {}".format(bssid))
+                    ap = AccessPoint(bssid=bssid)
+
+                ap.ssid = ssid
+                ap.location = place
+                ap.save()

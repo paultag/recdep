@@ -3,16 +3,17 @@ from django.contrib.gis.db import models as gis_models
 from django.contrib.auth.models import User
 
 
-class AccessPoint(models.Model):
-    ssid = models.CharField(max_length=128)
-    bssid = models.CharField(max_length=128, unique=True)
-
-
 class Place(models.Model):
     name = models.CharField(max_length=128, unique=True)
     description = models.TextField()
     point = gis_models.PointField()
     objects = gis_models.GeoManager()
+
+
+class AccessPoint(models.Model):
+    ssid = models.CharField(max_length=128)
+    bssid = models.CharField(max_length=128, unique=True)
+    location = models.ForeignKey(Place, related_name='aps', null=True)
 
 
 class Device(models.Model):
