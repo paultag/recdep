@@ -1,4 +1,9 @@
 import json
+from twilio.rest import TwilioRestClient
+
+from django.conf import settings
+from restless.modelviews import Endpoint
+from restless.auth import BasicHttpAuthMixin, login_required
 
 from .helpers import (RecDepListEndpoint, RecDepDetailEndpoint,
                       smerge, validate_machine_update)
@@ -88,3 +93,25 @@ class DeviceDetail(RecDepDetailEndpoint):
         device = Device.objects.get(name=key)
         for report in data:
             self.load_report(device, report)
+
+
+class TextEndpoint(Endpoint, BasicHttpAuthMixin):
+    methods = ["POST"]
+
+    @login_required
+    def post(self, request, *args, **kwargs):
+        body = request.POST['message']
+
+        client = TwilioRestClient(
+            settings.TWILIO_ACCOUNT_SID,
+            settings.TWILIO_AUTH_TOKEN,
+        )
+        client.messages.create(
+            to=settings.TWILIO_TO_NUMBER,
+            from_=settings.TWILIO_FROM_NUMBER,
+            body="""From: {user.username}
+
+{body}""".format(user=request.user, body=body)
+        )
+
+        return {"sent": True}

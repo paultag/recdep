@@ -51,3 +51,13 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+
+TWILIO_ACCOUNT_SID = None
+TWILIO_AUTH_TOKEN = None
+TWILIO_TO_NUMBER = "5555555555"
+TWILIO_FROM_NUMBER = "5555555555"
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
