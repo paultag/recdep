@@ -22,6 +22,10 @@ class Device(models.Model):
     token = models.CharField(max_length=128)
 
     @property
+    def location(self):
+        return self.checkin.location()
+
+    @property
     def checkin(self):
         try:
             return self.checkins.latest('when')
@@ -32,6 +36,17 @@ class Device(models.Model):
 class DeviceCheckin(models.Model):
     device = models.ForeignKey(Device, related_name='checkins')
     when = models.DateTimeField(auto_now=True)
+
+    @property
+    def location(self):
+        # Find all APs with a place, sort by strength, return
+        checkins = self.wifi_checkins.filter(
+            access_point__isnull=False
+        ).order_by('-strength')
+        if checkins.count() == 0:
+            return None
+        checkin = checkins[0]
+        return checkin.access_point.location
 
     @property
     def access_points(self):

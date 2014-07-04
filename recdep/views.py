@@ -46,9 +46,10 @@ DEVICE_SERIALIZE = {
         ("owner", {"fields": ["id", "username"]}),
         ("checkin", {
             "include": [
-                ("wifi_checkins", smerge(WIFI_SERIALIZE, {
-                    "exclude": ["id", "checkin"]
-                })),
+                ("location", LOCATION_SERIALIZE),
+                ("wifi_checkins", {
+                    "exclude": ["id", "checkin", "access_point"]
+                }),
                 ("batteries", smerge(BATTERY_SERIALIZE, {
                     "exclude": ["id", "checkin"]
                 })),
