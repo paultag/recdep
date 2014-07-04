@@ -3,3 +3,4 @@ dj-database-url
 DjangoRestless
 psycopg2
 twilio
+pyyaml

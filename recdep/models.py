@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.gis.db import models as gis_models
 from django.contrib.auth.models import User
 
 
@@ -7,9 +8,16 @@ class AccessPoint(models.Model):
     bssid = models.CharField(max_length=128, unique=True)
 
 
+class Place(models.Model):
+    name = models.CharField(max_length=128, unique=True)
+    description = models.TextField()
+    point = gis_models.PointField()
+    objects = gis_models.GeoManager()
+
+
 class Device(models.Model):
     owner = models.ForeignKey(User, related_name='devices')
-    name = models.CharField(max_length=128)
+    name = models.CharField(max_length=128, unique=True)
     token = models.CharField(max_length=128)
 
     @property

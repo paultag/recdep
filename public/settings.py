@@ -39,7 +39,7 @@ WSGI_APPLICATION = 'public.wsgi.application'
 DATABASES = {
     'default': dj_database_url.parse(os.environ.get(
         'DATABASE_URL',
-        'postgres://recdep:recdep@localhost/recdep'
+        'postgis://recdep:recdep@localhost/recdep'
     ))
 }
 
