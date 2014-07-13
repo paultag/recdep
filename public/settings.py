@@ -7,7 +7,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY', '')
 
 DEBUG = os.environ.get('DJANGO_DEBUG', False)
 TEMPLATE_DEBUG = DEBUG
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "api.pault.ag",
+    "api.lucifer.pault.ag",
+]
 
 # Application definition
 
