@@ -77,4 +77,4 @@ class DeviceWifiCheckin(models.Model):
 class DeviceBatteryCheckin(models.Model):
     checkin = models.ForeignKey(DeviceCheckin, related_name='battery_checkins')
     name = models.CharField(max_length=32)
-    value = models.DecimalField(decimal_places=8, max_digits=8)
+    value = models.IntegerField()

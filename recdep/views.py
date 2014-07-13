@@ -67,6 +67,21 @@ DEVICE_SERIALIZE = {
 }
 
 
+class APList(RecDepListEndpoint):
+    model = AccessPoint
+    serialize_config = ACCESS_POINT_SERIALIZE
+
+
+class APDetail(RecDepDetailEndpoint):
+    model = AccessPoint
+    query_key = "ssid"
+    serialize_config = ACCESS_POINT_SERIALIZE
+
+    @validate_machine_update
+    def post(self, request, key, **kwargs):
+        raise NotImplementedError()
+
+
 class DeviceList(RecDepListEndpoint):
     model = Device
     serialize_config = DEVICE_SERIALIZE
