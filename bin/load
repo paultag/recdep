@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+docker run \
+    -v /srv/lucifer.pault.ag/prod/api.pault.ag:/api.pault.ag \
+    -e SECRET_KEY=asf \
+    -e DATABASE_URL=postgis://recdep:recdep@postgres.prod.lucifer.pault.ag:5432/recdep \
+    -it --rm \
+    paultag/api.pault.ag \
+    python3.4 manage.py loadplaces /api.pault.ag/places.yaml
