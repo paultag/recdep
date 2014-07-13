@@ -1,7 +1,8 @@
 #!/bin/bash
+set -e
 
-echo "Migrating api.pault.ag"
-
+docker build --rm -t paultag/api.pault.ag .
+sudo service api.pault.ag stop
 docker run \
     -v /srv/lucifer.pault.ag/prod/api.pault.ag:/api.pault.ag \
     -e SECRET_KEY=asf \
@@ -9,3 +10,5 @@ docker run \
     -it --rm \
     paultag/api.pault.ag \
     python3.4 manage.py migrate
+docker rm api.pault.ag
+sudo service api.pault.ag start
