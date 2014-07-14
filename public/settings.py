@@ -1,6 +1,8 @@
 import os
 import dj_database_url
 
+oeg = lambda x, y: os.environ.get(x, y)
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = os.environ.get('SECRET_KEY', '')
 
@@ -56,10 +58,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-TWILIO_ACCOUNT_SID = None
-TWILIO_AUTH_TOKEN = None
-TWILIO_TO_NUMBER = "5555555555"
-TWILIO_FROM_NUMBER = "5555555555"
+TWILIO_ACCOUNT_SID = oeg("TWILIO_ACCOUNT_SID", None)
+TWILIO_AUTH_TOKEN = oeg("TWILIO_AUTH_TOKEN", None)
+TWILIO_TO_NUMBER = oeg("TWILIO_TO_NUMBER", "5555555555")
+TWILIO_FROM_NUMBER = oeg("TWILIO_FROM_NUMBER", "5555555555")
 
 try:
     from local_settings import *
