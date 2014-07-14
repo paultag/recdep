@@ -1,0 +1,13 @@
+[Unit]
+Description=api.pault.ag
+Author=Paul R. Tagliamonte <tag@pault.ag>
+Requires=docker.io.service postgres.service
+After=postgres.service
+
+[Service]
+Restart=always
+ExecStart=/bin/bash -c '/usr/bin/docker start -a api.pault.ag || /usr/bin/docker run --privileged=true --name api.pault.ag -e SECRET_KEY="" -e DATABASE_URL=postgis://recdep:recdep@postgres.prod.lucifer.pault.ag:5432/recdep -v /srv/lucifer.pault.ag/prod/nginx/serve/sockets:/sockets -v /srv/lucifer.pault.ag/prod/api.pault.ag/:/api.pault.ag/ paultag/api.pault.ag'
+ExecStop=/usr/bin/docker stop -t 5 api.pault.ag
+
+[Install]
+WantedBy=multi-user.target
