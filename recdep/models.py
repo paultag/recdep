@@ -9,6 +9,9 @@ class Place(models.Model):
     point = gis_models.PointField()
     objects = gis_models.GeoManager()
 
+    def __str__(self):
+        return "<Place: %s (%s)>" % (self.name, self.description)
+
     @property
     def access_points(self):
         return self.aps.all()
@@ -19,11 +22,17 @@ class AccessPoint(models.Model):
     bssid = models.CharField(max_length=128, unique=True)
     location = models.ForeignKey(Place, related_name='aps', null=True)
 
+    def __str__(self):
+        return "<AccessPoint: %s (%s)>" % (self.bssid, self.ssid)
+
 
 class Device(models.Model):
     owner = models.ForeignKey(User, related_name='devices')
     name = models.CharField(max_length=128, unique=True)
     token = models.CharField(max_length=128)
+
+    def __str__(self):
+        return "<Device: %s (%s)>" % (self.name, self.owner.username)
 
     @property
     def location(self):
@@ -40,6 +49,12 @@ class Device(models.Model):
 class DeviceCheckin(models.Model):
     device = models.ForeignKey(Device, related_name='checkins')
     when = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return "<DeviceCheckin: %s (%s)>" % (
+            self.device.name,
+            self.when.strftime("%Y-%m-%d @ %I:%m")
+        )
 
     @property
     def location(self):
